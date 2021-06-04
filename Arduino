@@ -1,46 +1,45 @@
-#include <LiquidCrystal.h>
-#define potpin A0
+#include <LiquidCrystal.h>				//to use the lcd commands
+#define potpin A0					//defining potentiometer
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);			//change this with your lcd connections
 int deger = 0;
 int sakla[3] = {0,0,0};
 int sayac=0;
-const int buttonPin = 7;
+const int buttonPin = 7;				//defining the button in the breadboard
 int butonDurum = 0;
 
 void setup() {
-  Serial.begin(9600);
-  lcd.begin(16, 2);
-  pinMode(buttonPin, INPUT) 
-}
+lcd.begin(16, 2);
+pinMode(buttonPin, INPUT) 				//telling arduino to take input button
+
 
 void loop() {
-	butonDurum = digitalRead(buttonPin);
-	deger= analogRead(potpin);
-	deger = map(deger,0,1023,50,200);
-	lcd.setCursor(0,0);
-	lcd.print("Set your HR n BP");
-	lcd.setCursor(0,1);
-	lcd.print(deger);  
- 	delay(100);
+butonDurum = digitalRead(buttonPin);			//button status 
+deger= analogRead(potpin);				//taking data from potentiometer
+deger = map(deger,0,1023,50,200);			//potentiometer has a 0-1023 range of data. We dont need that kind of numbers so we are using map function.
+lcd.setCursor(0,0);					//taking cursor to beginning of lcd screen.
+lcd.print("Set your HR n BP");
+lcd.setCursor(0,1);
+lcd.print(deger);  					//displaying the realtime data taken from potentiometer
+delay(100);
+lcd.clear();
+	
+  	if ((butonDurum == HIGH) && (sayac<3)) {	//checking if button pressed and input is below 3
+	sakla[sayac]= deger;				//storing data from the potentiometer
+	sayac++;
 	lcd.clear();
-
-  	if ((butonDurum == HIGH) && (sayac<3)) {
-		sakla[sayac]= deger;
-		sayac++;
-    lcd.clear();
-    lcd.print("Kaydedildi");
-    delay(2000);
-    lcd.clear();
-	  	  if (sayac == 3){
-        lcd.clear(); 
-       lcd.setCursor(0,0);
-        lcd.print("HR    SYS    DIA"); 
-	  		lcd.setCursor(0,1);
-		  	lcd.print(String(sakla[0])+String(" | ")+String(sakla[1])+String(" | ")+String(sakla[2]));
-		  	sayac =0;
-         delay(10000);
-			  }
+	lcd.print("Kaydedildi");			//telling the data is stored
+	delay(2000);
+  	lcd.clear();
+		if (sayac == 3){
+		lcd.clear(); 
+  		lcd.setCursor(0,0);
+  		lcd.print("HR    SYS    DIA"); 
+	  	lcd.setCursor(0,1);
+		lcd.print(String(sakla[0])+String(" | ")+String(sakla[1])+String(" | ")+String(sakla[2]));	//printing the stored values
+		sayac =0;		//resets the program
+         	delay(10000);
+		}
       
-	    }
+	}
 }

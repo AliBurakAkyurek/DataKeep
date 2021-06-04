@@ -1,0 +1,46 @@
+#include <LiquidCrystal.h>
+#define potpin A0
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int deger = 0;
+int sakla[3] = {0,0,0};
+int sayac=0;
+const int buttonPin = 7;
+int butonDurum = 0;
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  pinMode(buttonPin, INPUT) 
+}
+
+void loop() {
+	butonDurum = digitalRead(buttonPin);
+	deger= analogRead(potpin);
+	deger = map(deger,0,1023,50,200);
+	lcd.setCursor(0,0);
+	lcd.print("Set your HR n BP");
+	lcd.setCursor(0,1);
+	lcd.print(deger);  
+ 	delay(100);
+	lcd.clear();
+
+  	if ((butonDurum == HIGH) && (sayac<3)) {
+		sakla[sayac]= deger;
+		sayac++;
+    lcd.clear();
+    lcd.print("Kaydedildi");
+    delay(2000);
+    lcd.clear();
+	  	  if (sayac == 3){
+        lcd.clear(); 
+       lcd.setCursor(0,0);
+        lcd.print("HR    SYS    DIA"); 
+	  		lcd.setCursor(0,1);
+		  	lcd.print(String(sakla[0])+String(" | ")+String(sakla[1])+String(" | ")+String(sakla[2]));
+		  	sayac =0;
+         delay(10000);
+			  }
+      
+	    }
+}
